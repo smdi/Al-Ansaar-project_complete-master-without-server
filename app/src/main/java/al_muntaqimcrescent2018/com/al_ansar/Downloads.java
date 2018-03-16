@@ -38,10 +38,8 @@ public class Downloads extends Fragment {
 
 
     private FloatingActionButton fab;
-    private Button video,audio;
-    private RelativeLayout relativeLayout;
-    android.app.FragmentTransaction fv,fa ;
-    private Fragment fragmentVideo ,fragmentAudio;
+    android.app.FragmentTransaction fv ;
+    private Fragment fragmentVideo;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -53,23 +51,14 @@ public class Downloads extends Fragment {
 
         initialise(view);
         fragmentInitialise();
-        setFragmet(view);
+
     }
 
     synchronized private void  fragmentInitialise() {
 
 
         fragmentVideo = new Video_Downloads();
-        fragmentAudio = new Audio_downloads();
 
-//        setFragmetToVisible(fragmentVideo);
-
-
-
-        fa = getChildFragmentManager().beginTransaction();
-        fa.add(R.id.downloadsfrag ,fragmentAudio).setCustomAnimations(android.R.animator.fade_in,android.R.animator.fade_out).show(fragmentAudio).commit();
-
-        relativeLayout.setBackgroundColor(Color.WHITE);
 
         fv = getChildFragmentManager().beginTransaction();
         fv.add(R.id.downloadsfrag ,fragmentVideo).setCustomAnimations(android.R.animator.fade_in,android.R.animator.fade_out).show(fragmentVideo).commit();
@@ -85,16 +74,6 @@ public class Downloads extends Fragment {
     private void initialise(View view) {
 
 
-        relativeLayout = (RelativeLayout) view.findViewById(R.id.downloadsfrag);
-
-        video = (Button) view.findViewById(R.id.video);
-        video.setEnabled(false);
-        video.setVisibility(View.GONE);
-
-        audio = (Button) view.findViewById(R.id.audio);
-        audio.setEnabled(true);
-        audio.setVisibility(View.VISIBLE);
-
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab_montly_downloads);
 
@@ -109,39 +88,7 @@ public class Downloads extends Fragment {
         }
 
     }
-
-
-    private void  setFragmet(View view){
-
-        audio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                getMedia();
-                video.setEnabled(true);
-                video.setVisibility(View.VISIBLE);
-                audio.setEnabled(false);
-                audio.setVisibility(View.GONE);
-                getViewAnim(video,view,0);
-
-            }
-        });
-        video.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                getMedia();
-                video.setEnabled(false);
-                video.setVisibility(View.GONE);
-                audio.setEnabled(true);
-                audio.setVisibility(View.VISIBLE);
-                getViewAnim(audio ,view,1);
-
-            }
-        });
-    }
-
-    private void getViewAnim(Button button, final View view, final int av) {
+    private void getViewAnim(FloatingActionButton button, final View view) {
 
         ViewAnimator
                 .animate(button)
@@ -154,45 +101,13 @@ public class Downloads extends Fragment {
             @Override
             public void onStop() {
 
-                if (av == 1) {
-                    StartWork(view);
-                } else {
-
-                    startAudio(view);
-                }
+                Intent intent = new Intent(getActivity(),VideoCreator.class);
+                startActivity(intent);
             }
         });
 
     }
 
-    private void startAudio(View view) {
-
-        getActivity().setTitle("Audios Downloads");
-        fragmentVideo.getView().setVisibility(View.GONE);
-        fragmentAudio.getView().setVisibility(View.VISIBLE);
-
-        relativeLayout.setBackgroundColor(Color.WHITE);
-        fab.setImageResource(R.drawable.microphone);
-
-
-        getFab("audio",view);
-    }
-
-    private void StartWork(View view) {
-
-
-
-        fab.setImageResource(R.drawable.videocamera);
-
-        fragmentAudio.getView().setVisibility(View.GONE);
-        fragmentVideo.getView().setVisibility(View.VISIBLE);
-
-
-        getActivity().setTitle("Videos Downloads");
-        getFab("video" ,view);
-
-        relativeLayout.setBackgroundColor(Color.WHITE);
-    }
 
     private void getFab(String s,View view) {
 
@@ -203,40 +118,21 @@ public class Downloads extends Fragment {
         if(s.equals("video"))
         {
 
-
             fab.setOnClickListener(new View.OnClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onClick(View view) {
-                    TastyToast.makeText(getActivity(), "video", Toast.LENGTH_SHORT,TastyToast.INFO).show();
-                    getMedia();
-                    Intent intent = new Intent(getActivity(),VideoCreator.class);
-                    startActivity(intent);
 
+                    getMedia();
+                    getViewAnim(fab,view);
                     editor.putInt("media",0);
                     editor.commit();
                 }
             });
 
         }
-        else {
 
-            fab.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onClick(View view) {
 
-                    getMedia();
-                    TastyToast.makeText(getActivity(), "audio", Toast.LENGTH_SHORT,TastyToast.INFO).show();
-
-                    Intent intent = new Intent(getActivity(),VideoCreator.class);
-                    startActivity(intent);
-
-                    editor.putInt("media",1);
-                    editor.commit();
-                }
-            });
-        }
 
 
     }
@@ -244,4 +140,6 @@ public class Downloads extends Fragment {
         final MediaPlayer mp = MediaPlayer.create(getActivity(),R.raw.tweet);
         mp.start();
     }
+
+
 }

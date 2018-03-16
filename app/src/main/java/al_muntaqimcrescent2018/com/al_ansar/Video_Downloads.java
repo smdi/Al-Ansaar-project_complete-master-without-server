@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,7 +36,7 @@ import java.util.List;
  */
 
 public class Video_Downloads extends Fragment {
-    private FloatingActionButton fab;
+
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
 
@@ -56,13 +57,14 @@ public class Video_Downloads extends Fragment {
         return inflater.inflate(R.layout.video_downloads,container ,false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         initialise(view);
         getLotte();
-        getActivity().setTitle("Videos Downloads");
+        getActivity().setTitle("Downloads");
         GetVideos getVideos = new GetVideos();
         getVideos.execute();
 
@@ -209,7 +211,7 @@ public class Video_Downloads extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void getLotte() {
 
-        lottieAnimationView = (LottieAnimationView) getActivity().findViewById(R.id.loadvideo);
+        lottieAnimationView = (LottieAnimationView) getActivity().findViewById(R.id.animation_view);
         lottieAnimationView.setAnimation("preloader.json");
         lottieAnimationView.setVisibility(View.VISIBLE);
         lottieAnimationView.playAnimation();
@@ -221,8 +223,8 @@ public class Video_Downloads extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
                 if(dy>10) {
-                    lottieAnimationView.setVisibility(View.GONE);
                     lottieAnimationView.cancelAnimation();
+                    lottieAnimationView.setVisibility(View.GONE);
                 }
             }
         });

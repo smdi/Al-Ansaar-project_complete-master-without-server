@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 
 /**
@@ -30,7 +32,6 @@ import java.util.ArrayList;
  */
 
 public class Monthly_Video_Downloads extends Fragment {
-    private FloatingActionButton fab;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
 
@@ -71,6 +72,9 @@ public class Monthly_Video_Downloads extends Fragment {
 
         recyclerView = (RecyclerView)  view.findViewById(R.id.text_contact);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -209,7 +213,7 @@ public class Monthly_Video_Downloads extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void getLotte() {
 
-        lottieAnimationView = (LottieAnimationView) getActivity().findViewById(R.id.loadvideo);
+        lottieAnimationView = (LottieAnimationView) getActivity().findViewById(R.id.animation_view);
         lottieAnimationView.setAnimation("preloader.json");
         lottieAnimationView.setVisibility(View.VISIBLE);
         lottieAnimationView.playAnimation();
@@ -221,8 +225,8 @@ public class Monthly_Video_Downloads extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
                 if(dy>10) {
-                    lottieAnimationView.setVisibility(View.GONE);
                     lottieAnimationView.cancelAnimation();
+                    lottieAnimationView.setVisibility(View.GONE);
                 }
             }
         });

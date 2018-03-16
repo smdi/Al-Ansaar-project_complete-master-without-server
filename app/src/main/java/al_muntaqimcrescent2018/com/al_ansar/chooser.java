@@ -63,7 +63,7 @@ public class chooser extends AppCompatActivity {
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
 
-    private EditText headeredit,descriptionedit;
+    private EditText headeredit,descriptionedit,links;
 
 
 
@@ -115,6 +115,8 @@ public class chooser extends AppCompatActivity {
         img = (ImageButton) findViewById(R.id.add);
         headeredit = (EditText) findViewById(R.id.headingChoose);
         descriptionedit = (EditText) findViewById(R.id.descriptionChoose);
+        links = (EditText) findViewById(R.id.links);
+
     }
 
     @Override
@@ -143,73 +145,79 @@ public class chooser extends AppCompatActivity {
 
     private void AndroidSystempusher() {
 
-        final String datei = getSystemDate();
 
-        final String headertext = " "+headeredit.getText();
-        final String descriptiontext = " "+descriptionedit.getText();
+      try {
+          final String datei = getSystemDate();
+          final String headertext = " " + headeredit.getText();
+          final String descriptiontext = " " + descriptionedit.getText();
+          final String link = String.valueOf(links.getText());
 
-      if((photouri!=null)&&(headertext.length()>5)&&(descriptiontext.length()>5)) {
-          StorageReference mref = storageReference.child(photouri.getLastPathSegment());
+//          Toast.makeText(getApplicationContext(),""+link,Toast.LENGTH_LONG);
+
+          if ((photouri != null) && (headertext.length() > 5) && (descriptiontext.length() > 5)) {
+              StorageReference mref = storageReference.child(photouri.getLastPathSegment());
 
 
-          mref.putFile(photouri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-              @Override
-              public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+              if (headertext.length() <= 70) {
 
-                  Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                  mref.putFile(photouri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                      @Override
+                      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                  HomeInitialiser homeInitialiser = new HomeInitialiser(downloadUrl.toString(), "" + headertext.trim(), " " + descriptiontext.trim(), datei);
-                  dbreference.push().setValue(homeInitialiser);
+                          Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                          HomeInitialiser homeInitialiser = new HomeInitialiser(downloadUrl.toString(), "" + headertext.trim().replaceAll("\\s+", " "), " " + descriptiontext.trim().replaceAll("\\s+", " "), datei,link);
+                          dbreference.push().setValue(homeInitialiser);
 
-                  TastyToast.makeText(getApplicationContext(), "pushed", Toast.LENGTH_LONG,TastyToast.SUCCESS).show();
+                          TastyToast.makeText(getApplicationContext(), "pushed", Toast.LENGTH_LONG, TastyToast.SUCCESS).show();
+                          cancelAnim();
+                          finish();
+                      }
+                  });
+                  mref.putFile(photouri).addOnFailureListener(this, new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
+                          TastyToast.makeText(getApplicationContext(), "error", Toast.LENGTH_LONG, TastyToast.ERROR).show();
+                          cancelAnim();
+                      }
+                  });
+
+              } else {
                   cancelAnim();
-                  finish();
+                  TastyToast.makeText(getApplicationContext(), "Heading is too lengthy", Toast.LENGTH_SHORT, TastyToast.ERROR).show();
               }
-          });
-          mref.putFile(photouri).addOnFailureListener(this, new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception e) {
+          } else {
+              cancelAnim();
 
-                  TastyToast.makeText(getApplicationContext(), "error", Toast.LENGTH_LONG,TastyToast.ERROR).show();
-                  cancelAnim();
+              if (photouri == null) {
+                  TastyToast.makeText(getApplicationContext(), "choose photo file", Toast.LENGTH_SHORT, TastyToast.CONFUSING).show();
+              } else {
+                  TastyToast.makeText(getApplicationContext(), "give heading and description", Toast.LENGTH_SHORT, TastyToast.CONFUSING).show();
               }
-          });
-
-      }
-      else {
-          cancelAnim();
-
-          if(photouri==null) {
-              TastyToast.makeText(getApplicationContext(), "choose photo file", Toast.LENGTH_SHORT,TastyToast.CONFUSING).show();
           }
-          else {
-              TastyToast.makeText(getApplicationContext(), "give heading and description", Toast.LENGTH_SHORT,TastyToast.CONFUSING).show();
-          }
-      }
+
+      }catch (Exception e){e.printStackTrace();}
     }
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+            super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK)
-        {
+            if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+                TastyToast.makeText(getApplicationContext(), "pick an image", Toast.LENGTH_SHORT, TastyToast.INFO).show();
 
-            TastyToast.makeText(getApplicationContext(),"pick an image",Toast.LENGTH_SHORT,TastyToast.INFO).show();
+                photouri = data.getData();
 
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photouri);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                img.setImageBitmap(bitmap);
 
-             photouri = data.getData();
-
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),photouri);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-            img.setImageBitmap(bitmap);
 
-        }
     }
 
     private String corrector(String master) {

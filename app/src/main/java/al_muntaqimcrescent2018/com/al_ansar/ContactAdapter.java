@@ -85,7 +85,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                     editor.putInt("notify", 0);
                     editor.commit();
                     Intent intent = new Intent(context, AV_display.class);
-                    intent.putExtra("link", "https://console.firebase.google.com/project/al-ansar/notification/compose");
+                    intent.putExtra("link", "https://console.firebase.google.com/u/2/project/al-ansaar-f950b/notification/compose");
                     context.startActivity(intent);
 
                 }

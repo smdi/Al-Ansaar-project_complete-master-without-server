@@ -32,8 +32,8 @@ public class MonthlyBayans extends Fragment {
 
 
     private FloatingActionButton fab;
-    private Button video,audio;
-    private RelativeLayout relativeLayout;
+  //  private Button video,audio;
+  //  private RelativeLayout relativeLayout;
     android.app.FragmentTransaction fv,fa ;
     private Fragment fragmentVideo ,fragmentAudio;
     @Nullable
@@ -48,19 +48,13 @@ public class MonthlyBayans extends Fragment {
         getActivity().setTitle("Monthly Bayans");
         initialise(view);
         fragmentInitialise();
-        setFragmet(view);
+
     }
 
     synchronized private void  fragmentInitialise() {
 
 
         fragmentVideo = new Monthly_Video_Downloads();
-        fragmentAudio = new Monthly_Audio_downloads();
-
-        fa = getChildFragmentManager().beginTransaction();
-        fa.add(R.id.downloadsfrag ,fragmentAudio).setCustomAnimations(android.R.animator.fade_in,android.R.animator.fade_out).show(fragmentAudio).commit();
-
-        relativeLayout.setBackgroundColor(Color.WHITE);
 
         fv = getChildFragmentManager().beginTransaction();
         fv.add(R.id.downloadsfrag ,fragmentVideo).setCustomAnimations(android.R.animator.fade_in,android.R.animator.fade_out).show(fragmentVideo).commit();
@@ -68,22 +62,6 @@ public class MonthlyBayans extends Fragment {
 
 
     private void initialise(View view) {
-
-
-        getActivity().setTitle("Monthly Videos");
-        relativeLayout = (RelativeLayout) view.findViewById(R.id.downloadsfrag);
-
-        video = (Button) view.findViewById(R.id.video);
-        video.setEnabled(false);
-        video.setVisibility(View.GONE);
-
-
-        audio = (Button) view.findViewById(R.id.audio);
-        audio.setEnabled(true);
-        audio.setVisibility(View.VISIBLE);
-
-
-
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab_montly_downloads);
 
@@ -99,43 +77,7 @@ public class MonthlyBayans extends Fragment {
     }
 
 
-    private void  setFragmet(View view){
-
-        audio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                getMedia();
-                video.setEnabled(true);
-                video.setVisibility(View.VISIBLE);
-
-                audio.setEnabled(false);
-                audio.setVisibility(View.GONE);
-
-                getViewAnim(video,view,0);
-
-
-            }
-        });
-        video.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                getMedia();
-                video.setEnabled(false);
-                video.setVisibility(View.GONE);
-
-                audio.setEnabled(true);
-                audio.setVisibility(View.VISIBLE);
-
-                getViewAnim(audio,view ,1);
-
-
-            }
-        });
-    }
-
-    private void getViewAnim(Button video, final View view, final int i) {
+    private void getViewAnim(FloatingActionButton video, final View view) {
 
         ViewAnimator
                 .animate(video)
@@ -148,46 +90,19 @@ public class MonthlyBayans extends Fragment {
             @Override
             public void onStop() {
 
-                if(i == 1) {
-                    StartWork(view);
-                }
-                else {
+                TastyToast.makeText(getActivity(), "video", Toast.LENGTH_SHORT,TastyToast.INFO).show();
 
-                    startAudio(view);
-                }
+                Intent intent = new Intent(getActivity(),VideoCreator.class);
+                startActivity(intent);
+
+
             }
         });
 
     }
 
-    private void startAudio(View view) {
-
-        getActivity().setTitle("Monthly Audios");
-
-        fragmentVideo.getView().setVisibility(View.GONE);
-        fragmentAudio.getView().setVisibility(View.VISIBLE);
 
 
-
-        relativeLayout.setBackgroundColor(Color.WHITE);
-        fab.setImageResource(R.drawable.microphone);
-
-        getFab("audio",view);
-    }
-
-    private void StartWork(View view) {
-
-        fab.setImageResource(R.drawable.videocamera);
-
-        getActivity().setTitle("Monthly Videos");
-        getFab("video" ,view);
-
-        relativeLayout.setBackgroundColor(Color.WHITE);
-
-        fragmentAudio.getView().setVisibility(View.GONE);
-        fragmentVideo.getView().setVisibility(View.VISIBLE);
-
-    }
 
     private void getFab(String s,View view) {
 
@@ -204,37 +119,17 @@ public class MonthlyBayans extends Fragment {
                 @Override
                 public void onClick(View view) {
 
+
+                    getViewAnim(fab,view);
                     getMedia();
-                    TastyToast.makeText(getActivity(), "video", Toast.LENGTH_SHORT,TastyToast.INFO).show();
-
-                    Intent intent = new Intent(getActivity(),VideoCreator.class);
-                    startActivity(intent);
-
                     editor.putInt("media",2);
                     editor.commit();
+
                 }
             });
 
         }
-        else {
 
-            fab.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onClick(View view) {
-
-                    getMedia();
-                    TastyToast.makeText(getActivity(), "audio", Toast.LENGTH_SHORT,TastyToast.INFO).show();
-
-
-                    Intent intent = new Intent(getActivity(),VideoCreator.class);
-                    startActivity(intent);
-
-                    editor.putInt("media",3);
-                    editor.commit();
-                }
-            });
-        }
 
 
     }

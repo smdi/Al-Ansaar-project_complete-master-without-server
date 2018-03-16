@@ -82,17 +82,14 @@ public class VideoCreator extends AppCompatActivity {
 
             if(descriptiontext.length()<=115) {
 
-                Video_Audio_Initialiser video_audio_initialiser = new Video_Audio_Initialiser("" + ylink.trim(), descriptiontext, datei);
+                Video_Audio_Initialiser video_audio_initialiser = new Video_Audio_Initialiser("" + ylink.trim(), descriptiontext.replaceAll("\\s+"," "), datei);
 
                 dbreference.push().setValue(video_audio_initialiser).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
 
                         TastyToast.makeText(getApplicationContext(), "pushed", Toast.LENGTH_SHORT, TastyToast.SUCCESS).show();
-
-
                         cancelAnim();
-
                         finish();
                     }
                 });

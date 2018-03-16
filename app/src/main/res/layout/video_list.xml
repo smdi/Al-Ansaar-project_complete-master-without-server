@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainrelay"
+    android:layout_marginTop="10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -38,7 +39,7 @@
                 android:background="#FFF"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/alansar" />
+                android:src="@drawable/alansare" />
 
             <RelativeLayout
                 android:id="@+id/Layout_inCard"
@@ -51,8 +52,6 @@
                     android:id="@+id/imageViewRelay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/move"
-                    android:layout_toEndOf="@id/move"
                     tools:ignore="WebViewLayout">
 
                     <WebView
@@ -62,15 +61,19 @@
                         android:layout_marginTop="80dp"
                         android:background="#FFF"></WebView>
 
-                    <com.airbnb.lottie.LottieAnimationView xmlns:android="http://schemas.android.com/apk/res/android"
+                    <com.airbnb.lottie.LottieAnimationView
+                        xmlns:android="http://schemas.android.com/apk/res/android"
                         xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/loadvideo"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_alignTop="@+id/CircularImageOntop"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_alignTop="@id/CircularImageOntop"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="53dp"
-                        android:elevation="12dp" />
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="60dp"
+                        android:elevation="12dp"
+                        />
+
                     <TextView
                         android:id="@+id/descriptionmedia"
                         android:layout_width="wrap_content"
@@ -118,9 +121,10 @@
                     android:layout_marginStart="18dp"
                     android:layout_toEndOf="@id/share"
                     android:background="#FFF"
-                    android:src="@drawable/downarrowos" />
+                    android:src="@drawable/ic_file_download_black_24dp" />
 
-                <TextView
+
+                <com.tomer.fadingtextview.FadingTextView
                     android:id="@+id/datemedia"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -131,7 +135,8 @@
                     android:text="29 jan 2018"
                     android:textSize="15sp"
                     android:layout_marginBottom="10dp"
-                    android:tooltipText="hello" />
+                    android:tooltipText="hello"
+                    />
 
 
             </RelativeLayout>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -32,16 +33,15 @@ import android.widget.VideoView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.github.florent37.viewanimator.ViewAnimator;
 import com.sdsmdg.tastytoast.TastyToast;
+import com.tomer.fadingtextview.FadingTextView;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.List;
 
 import at.huber.youtubeExtractor.YouTubeUriExtractor;
 import at.huber.youtubeExtractor.YtFile;
-
-//import at.huber.youtubeExtractor.YouTubeUriExtractor;
-//import at.huber.youtubeExtractor.YtFile;
 
 /**
  * Created by Imran on 08-02-2018.
@@ -68,18 +68,27 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
 
-
-        pos = position+1;
-
         getViewAnim(holder.videoView);
         final Video_Audio_Initialiser video_audio_initialiser = listitem.get(position);
 
-        holder.mediades.setText(""+video_audio_initialiser.getDescription());
+        holder.mediades.setText(""+video_audio_initialiser.getDescription().replaceAll("\\s+","  "));
 
         StringBuilder date = getTheTime(""+video_audio_initialiser.getDate());
 
-        holder.datemedia.setText(""+date);
+        StringBuilder check = getTheTime(""+getSystemDate());
 
+        String fadad[] = {""+date,""+date};
+        if(date.toString().equals(check.toString())) {
+
+            holder.datemedia.setTimeout(FadingTextView.SECONDS ,2);
+            holder.datemedia.setTexts(fadad);
+            holder.datemedia.setTextColor(Color.BLACK);
+        }
+        else {
+            holder.datemedia.setTimeout(FadingTextView.SECONDS ,5);
+            holder.datemedia.setTexts(fadad);
+            holder.datemedia.setTextColor(Color.GRAY);
+        }
         final String vid = getVid(""+video_audio_initialiser.getUri());
 
 
@@ -94,7 +103,7 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                holder.lottieAnimationView.setVisibility(View.GONE);
+               holder.lottieAnimationView.setVisibility(View.GONE);
             }
         });
 
@@ -120,8 +129,9 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
             public void onClick(View view) {
 
                 getMedia();
-                final Video_Audio_Initialiser homeInitialiser = listitem.get(pos);
-                Intent share =    shareImageData(context ,"Al-Ansaar video recommendation", ""+homeInitialiser.getUri() ,""+homeInitialiser.getDescription());
+
+                final Video_Audio_Initialiser homeInitialiser = listitem.get(position);
+                Intent share =    shareImageData(context ,"Al Ansaar Bayan recommendation", ""+homeInitialiser.getUri() ,""+homeInitialiser.getDescription());
 
                 context.startActivity(Intent.createChooser(share, "choose one"));
 
@@ -134,8 +144,7 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
 
                 getMedia();
 
-                final Video_Audio_Initialiser homeInitialiser = listitem.get(pos);
-
+                final Video_Audio_Initialiser homeInitialiser = listitem.get(position);
 
                 try {
 
@@ -145,12 +154,12 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
                             if (ytFiles != null) {
                                 int itag = 22;
 
-                              try {
-                                  String downloadUrl = ytFiles.get(itag).getUrl();
+                                try {
+                                    String downloadUrl = ytFiles.get(itag).getUrl();
 
-                                  setURl(downloadUrl,homeInitialiser);
-                              }
-                              catch (Exception e){e.printStackTrace();}
+                                    setURl(downloadUrl,homeInitialiser);
+                                }
+                                catch (Exception e){e.printStackTrace();}
 
 
                             }
@@ -187,6 +196,12 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
 
     }
 
+    public String getSystemDate() {
+
+        Calendar calendar =Calendar.getInstance();
+
+        return ""+calendar.getTime();
+    }
     private void setURl(String downloadUrl, Video_Audio_Initialiser homeInitialiser) {
 
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
@@ -269,7 +284,8 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
         public WebView videoView;
         public LottieAnimationView lottieAnimationView;
         public RelativeLayout relativeLayout ,mainrelay;
-        public TextView mediades,datemedia;
+        public TextView mediades;
+        public FadingTextView datemedia;
         public ImageButton imageView,shareview,download;
         public WebSettings webSettings;
         public ViewHolder(View itemView) {
@@ -280,7 +296,7 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
             imageView = (ImageButton) itemView.findViewById(R.id.enlarge);
             videoView = (WebView) itemView.findViewById(R.id.CircularImageOntop);
             mediades  = (TextView)  itemView.findViewById(R.id.descriptionmedia);
-            datemedia = (TextView)  itemView.findViewById(R.id.datemedia);
+            datemedia = (FadingTextView)  itemView.findViewById(R.id.datemedia);
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.Layout_inCard);
             lottieAnimationView = (LottieAnimationView) itemView.findViewById(R.id.loadvideo);
             webSettings = videoView.getSettings();
@@ -362,8 +378,8 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, header);
         String sAux =""+header+"\n\n";
-        sAux = sAux + ""+link;
-        sAux = sAux+"";
+        sAux = sAux + ""+link+"\n\n";
+        sAux = sAux+""+description;
         shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
 
 

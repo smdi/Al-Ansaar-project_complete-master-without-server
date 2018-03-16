@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,12 +26,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.github.florent37.viewanimator.AnimationListener;
 import com.github.florent37.viewanimator.ViewAnimator;
 import com.sdsmdg.tastytoast.TastyToast;
+import com.tomer.fadingtextview.FadingTextView;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -68,10 +72,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         if(true) {
 
             try {
-
-
-
-
                 for(int i = 0 ;i<bank.length ;i++){
 
                     token = bank[i].substring(0,1);
@@ -81,29 +81,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
                     str.append(" "+build.concat(token.toUpperCase()+remain));
 
                     System.out.print(" "+build.concat(token.toUpperCase()+remain));
-
                 }
-
-
             }
             catch (Exception e)
             {
                 e.printStackTrace();
             }
         }
-
         return " "+str;
-
-
     }
-
-
-
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView  headings ,dates ,more;
+        public TextView  headings  ,more;
+        public FadingTextView dates;
         public TextView  descriptions;
-        public ImageView cimages,tag,download;
+        public ImageView cimages,tag,download,links;
         public RelativeLayout relay;
         public ImageView share;
         public WebView webView;
@@ -115,7 +107,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             myview = itemView;
             tag = (ImageView) itemView.findViewById(R.id.ribbons);
             download = (ImageView) itemView.findViewById(R.id.downloadbut);
-            dates = (TextView) itemView.findViewById(R.id.date);
+            dates = (FadingTextView) itemView.findViewById(R.id.date);
             more = (TextView) itemView.findViewById(R.id.more);
             headings = (TextView) itemView.findViewById(R.id.main_head);
             descriptions = (TextView) itemView.findViewById(R.id.description);
@@ -123,6 +115,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             relay = (RelativeLayout) itemView.findViewById(R.id.Layout_inCard);
             share = (ImageView) itemView.findViewById(R.id.share);
             webView = (WebView) itemView.findViewById(R.id.watsapp);
+            links = (ImageView) itemView.findViewById(R.id.linkImage);
             SharedPreferences sharedPreferences= context.getSharedPreferences("EventHome",Context.MODE_PRIVATE);
             int event = sharedPreferences.getInt("event",0);
             if(event == 0)
@@ -135,8 +128,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             }
         }
     }
-
-
 
     @Override
     public EventAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -173,15 +164,41 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
         String headerGet = getCapsHead(homeInitialiser.getHeading());
 
-        holder.headings.setText(""+headerGet);
+        holder.headings.setText(""+headerGet.replaceAll("\\s+"," "));
+
 
         holder.headings.setTypeface(Typeface.MONOSPACE);
 
-        holder.descriptions.setText(""+homeInitialiser.getDescription());
+
+
+        if(homeInitialiser.getLink().equals(""))
+        {
+                holder.links.setVisibility(View.GONE);
+        }
+        else {
+            holder.links.setVisibility(View.VISIBLE);
+        }
+
+
+        holder.links.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getMedia();
+
+                Intent intent = new Intent(context,Fundamentals.class);
+                intent.putExtra("link",""+homeInitialiser.getLink());
+                context.startActivity(intent);
+            }
+        });
+
+        Toast.makeText(context,""+homeInitialiser.getLink(),Toast.LENGTH_LONG);
+
+        holder.descriptions.setText(""+homeInitialiser.getDescription().replaceAll("\\s+"," "));
 
         holder.descriptions.setTypeface(Typeface.MONOSPACE);
 
-        if(homeInitialiser.getDescription().length()>50)
+        if(homeInitialiser.getDescription().length()>100)
         {
             holder.more.setVisibility(View.VISIBLE);
             holder.more.setOnClickListener(new View.OnClickListener() {
@@ -227,7 +244,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         if(isphoto)
         {
 
-            Glide.with(holder.cimages.getContext()).load(homeInitialiser.getUri()).into(holder.cimages);
+            Glide.with(holder.cimages.getContext()).load(homeInitialiser.getUri())
+                    .error(R.drawable.alansare)
+                    .into(holder.cimages);
 
             ViewAnimator
                     .animate( holder.cimages)
@@ -250,12 +269,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             public void onClick(View view) {
 
                 getMedia();
-                final HomeInitialiser homeInitialiser1 = listitem.get(pos);
 
+               try {
 
-             Intent share =    shareImageData(context ,""+homeInitialiser1.getHeading(), ""+homeInitialiser1.getUri() ,""+homeInitialiser1.getDescription());
+                   Intent share =    shareImageData(context ,""+homeInitialiser.getHeading(), ""+homeInitialiser.getUri() ,""+homeInitialiser.getDescription());
 
-                context.startActivity(Intent.createChooser(share, "choose one"));
+                   context.startActivity(Intent.createChooser(share, "choose one"));
+
+               }
+                catch (Exception e){e.printStackTrace();}
 
             }
         });
@@ -263,7 +285,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
         holder.dates.setText(""+getTheTime(homeInitialiser.getDate()));
 
+        StringBuilder check = getTheTime(""+getSystemDate());
 
+        StringBuilder chari = getTheTime(""+homeInitialiser.getDate());
+
+        String fadad[] = {""+chari,""+chari};
+        if(check.toString().equals(chari.toString())) {
+            holder.dates.setTimeout(FadingTextView.SECONDS ,2);
+            holder.dates.setTexts(fadad);
+            holder.dates.setTextColor(Color.BLACK);
+        }
+        else {
+           holder.dates.setTimeout(FadingTextView.SECONDS ,5);
+            holder.dates.setTexts(fadad);
+            holder.dates.setTextColor(Color.GRAY);
+        }
 
         holder.cimages.setLongClickable(true);
         holder.cimages.setOnLongClickListener(new View.OnLongClickListener() {
@@ -283,6 +319,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
 
     }
+
 
     private void setURl(String downloadUrl, HomeInitialiser homeInitialiser) {
 
@@ -316,7 +353,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, header);
-        String sAux =" بسم الله الرحمن الرحيم " + "\n\n" + "Al-Ansaar Recommendations\n\n" +header+"\n";
+        String sAux =" بسم الله الرحمن الرحيم " + "\n\n" + "Al Ansaar Recommendations\n\n" +header+"\n";
         sAux = sAux + "";
         sAux = sAux+"\n"+description+"\n";
         shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
@@ -358,7 +395,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
         }
     }
+    public String getSystemDate() {
 
+        Calendar calendar =Calendar.getInstance();
+
+        return ""+calendar.getTime();
+    }
     @Override
     public int getItemCount() {
         return listitem.size();

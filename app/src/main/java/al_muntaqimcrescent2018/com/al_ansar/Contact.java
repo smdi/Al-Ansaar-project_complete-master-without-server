@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.github.florent37.viewanimator.AnimationListener;
+import com.github.florent37.viewanimator.ViewAnimator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -148,11 +151,33 @@ public class Contact extends Fragment {
         }
         recyclerView = (RecyclerView)  view.findViewById(R.id.text_contact);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         listViewH = new ArrayList();
+
+    }
+    private void getViewAnim(FloatingActionButton button, final View view) {
+
+        ViewAnimator
+                .animate(button)
+                .thenAnimate(button)
+                .scale(.1f,
+                        1f, 1f)
+                .accelerate()
+                .duration(2000)
+                .start().onStop(new AnimationListener.Stop() {
+            @Override
+            public void onStop() {
+
+                Intent intent = new Intent(getActivity(),Contact_Creator.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -163,8 +188,7 @@ public class Contact extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getActivity(),Contact_Creator.class);
-                startActivity(intent);
+              getViewAnim(fab,view);
 
             }
         });
@@ -240,10 +264,11 @@ public class Contact extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
-          if(dy>0) {
-              lottieAnimationView.setVisibility(View.GONE);
-              lottieAnimationView.cancelAnimation();
-          }
+                if(dy>10)
+                {
+                    lottieAnimationView.cancelAnimation();
+                    lottieAnimationView.setVisibility(View.GONE);
+                }
             }
         });
 

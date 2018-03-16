@@ -14,6 +14,7 @@
         android:layout_height="32dp"
         android:layout_alignParentRight="true"
         android:elevation="10dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/cardView"
         tools:layout_editor_absoluteX="264dp" />
 
@@ -43,7 +44,7 @@
         android:background="#FFF"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/alansar"
+        android:src="@drawable/alansare"
         />
 
         <RelativeLayout
@@ -54,8 +55,7 @@
             >
 
             <RelativeLayout
-                android:layout_below="@id/main_head"
-                android:layout_marginTop="27dp"
+                android:layout_marginTop="73dp"
                 android:id="@+id/imageViewRelay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -72,17 +72,17 @@
 
             <TextView
                 android:id="@+id/main_head"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="33dp"
-                android:layout_marginTop="25dp"
-                android:layout_toEndOf="@id/downloadbut"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginRight="5dp"
+                android:layout_toEndOf="@+id/downloadbut"
                 android:text="This is Heading"
                 android:textColor="#000"
-                android:textScaleX="1.1"
+                android:textScaleX="0.9"
                 android:textSize="15sp"
-                android:layout_marginLeft="5dp"
                 android:tooltipText="hello" />
 
 
@@ -92,31 +92,31 @@
                 android:id="@+id/description"
                 android:maxLines="3"
                 android:layout_marginRight="5dp"
-                android:layout_below="@id/date"
+                android:layout_below="@id/imageViewRelay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:text="description"
-                android:textScaleX="1.1"
+                android:textScaleX=".9"
                 android:lineSpacingExtra="3dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="20dp"
                 android:tooltipText="this is  description"
                 android:textSize="15sp" />
 
-
-            <TextView
+            <com.tomer.fadingtextview.FadingTextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:text="29 jan 2018"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="20dp"
-                android:layout_below="@id/imageViewRelay"
+                android:layout_below="@id/description"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="7dp"
                 android:tooltipText="hello"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                />
 
             <TextView
                 android:id="@+id/more"
@@ -124,34 +124,42 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="show more"
-                android:layout_marginTop="5dp"
                 android:layout_below="@id/description"
-                android:textSize="15sp" />
-
-            <ImageView
-                android:id="@+id/downloadbut"
-                android:layout_marginLeft="15dp"
-                android:src="@drawable/downarrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/description"
+                android:layout_marginTop="7dp"
                 android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/share"
-                android:layout_marginRight="15dp"
-                android:src="@drawable/shareoptiontf"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/shareoptionst"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:elevation="2dp"
-                android:layout_alignParentRight="true"
+                android:layout_marginTop="7dp"
                 android:layout_below="@id/description"
+                android:layout_alignParentLeft="true"
                 android:textSize="15sp" />
 
+            <ImageView
+                android:id="@+id/downloadbut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/share"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@id/share"
+                android:elevation="2dp"
+                android:src="@drawable/ic_file_download_black_24dp"
+                android:textSize="15sp" />
 
+            <ImageView
+                android:id="@+id/linkImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/share"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@id/downloadbut"
+                android:elevation="2dp"
+                android:src="@drawable/linkbutton"
+                android:textSize="15sp" />
 
         </RelativeLayout>
 

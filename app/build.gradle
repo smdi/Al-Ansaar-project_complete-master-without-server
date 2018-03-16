@@ -53,5 +53,6 @@ dependencies {
     compile 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
     compile 'com.airbnb.android:lottie:2.5.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.github.Commit451.YouTubeExtractor:youtubeextractor:2.1.0'
 }
 apply plugin: 'com.google.gms.google-services'

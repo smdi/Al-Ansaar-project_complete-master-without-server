@@ -81,7 +81,7 @@ public class Contact_Creator extends AppCompatActivity {
 
       if(getContact.length() >3 && getMail.contains("@gmail.com")&& getProf.length()>3) {
           DatabaseReference databaseReference = dbreference;
-          ContactInitialiser contactInitialiser = new ContactInitialiser(getContact, getProf, getMail);
+          ContactInitialiser contactInitialiser = new ContactInitialiser(getContact.replaceAll("\\s+"," "), getProf.replaceAll("\\s+"," "), getMail);
           databaseReference.push().setValue(contactInitialiser).addOnCompleteListener(new OnCompleteListener<Void>() {
               @Override
               public void onComplete(@NonNull Task<Void> task) {

@@ -326,13 +326,15 @@ public class MainActivity extends AppCompatActivity
                        setConec();
                    }
                    break;
+
+
                case R.id.nav_share:
 
                    if(internet) {
                        Intent i = new Intent(Intent.ACTION_SEND);
                        i.setType("text/plain");
-                       i.putExtra(Intent.EXTRA_SUBJECT, "Al-Ansar");
-                       String sAux = "\nAl-Ansaar App link (Spreading peace to world)\n\n";
+                       i.putExtra(Intent.EXTRA_SUBJECT, "Al Ansaar");
+                       String sAux = "\nAl Ansaar App link (Spreading peace to world)\n\n";
 //                    sAux = sAux + "https://play.google.com/store/apps/details?id=Orion.Soft \n\n";
                        i.putExtra(Intent.EXTRA_TEXT, sAux);
                        startActivity(Intent.createChooser(i, "choose one"));

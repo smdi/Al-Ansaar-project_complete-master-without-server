@@ -11,7 +11,7 @@
         <item
             android:id="@+id/monthly_bayans"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Monthly bayans" />
+            android:title="Monthly Bayans" />
         <item
             android:id="@+id/downloads"
             android:icon="@drawable/ic_file_download_black_24dp"
@@ -19,12 +19,12 @@
         <item
             android:id="@+id/comingEvents"
             android:icon="@drawable/ic_event_black_24dp"
-            android:title="Up-coming Events" />
+            android:title="Up Coming Events" />
         <item
             android:id="@+id/joingroup"
             android:autoLink="web"
             android:icon="@drawable/whatsapp"
-            android:title="Join group" />
+            android:title="Join Group" />
     </group>
 
     <item android:title="Communicate">
@@ -37,7 +37,7 @@
             <item
                 android:id="@+id/contact_us"
                 android:icon="@drawable/ic_contacts_black_24dp"
-                android:title="contact us" />
+                android:title="Contact Us" />
 
         </menu>
     </item>

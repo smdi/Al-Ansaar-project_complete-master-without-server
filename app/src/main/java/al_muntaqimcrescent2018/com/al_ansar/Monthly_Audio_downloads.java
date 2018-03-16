@@ -44,7 +44,7 @@ public class Monthly_Audio_downloads extends Fragment {
     private StorageReference storageReference;
 
     private ProgressBar progressBar;
-    private LottieAnimationView lottieAnimationView;
+    private ProgressBar lottieAnimationView;
 
     private ChildEventListener childEventListener;
 
@@ -76,6 +76,9 @@ public class Monthly_Audio_downloads extends Fragment {
 
         recyclerView = (RecyclerView)  view.findViewById(R.id.text_contact);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -212,11 +215,11 @@ public class Monthly_Audio_downloads extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void getLotte() {
 
-        lottieAnimationView = (LottieAnimationView) getActivity().findViewById(R.id.loadvideo);
-        lottieAnimationView.setAnimation("preloader.json");
+        lottieAnimationView = (ProgressBar) getActivity().findViewById(R.id.loadvideo);
+//        lottieAnimationView.setAnimation("preloader.json");
         lottieAnimationView.setVisibility(View.VISIBLE);
-        lottieAnimationView.playAnimation();
-        lottieAnimationView.loop(true);
+//        lottieAnimationView.playAnimation();
+//        lottieAnimationView.loop(true);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -225,7 +228,7 @@ public class Monthly_Audio_downloads extends Fragment {
 
                 if(dy>10) {
                     lottieAnimationView.setVisibility(View.GONE);
-                    lottieAnimationView.cancelAnimation();
+//                    lottieAnimationView.cancelAnimation();
                 }
             }
         });

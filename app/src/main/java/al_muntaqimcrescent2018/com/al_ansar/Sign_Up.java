@@ -261,7 +261,7 @@ public class Sign_Up extends AppCompatActivity {
     {
         FirebaseUser user = firebaseAuth.getCurrentUser();
 
-        TastyToast.makeText(getApplicationContext()," Welcome to Al-Ansaar ",Toast.LENGTH_LONG,TastyToast.SUCCESS).show();
+        TastyToast.makeText(getApplicationContext()," Welcome to Al Ansaar ",Toast.LENGTH_LONG,TastyToast.SUCCESS).show();
 
       return   " "+user.getDisplayName();
     }
@@ -295,7 +295,7 @@ public class Sign_Up extends AppCompatActivity {
             lottieAnimationView.setVisibility(View.VISIBLE);
             lotterelay.setVisibility(View.VISIBLE);
             lottieAnimationView.playAnimation();
-            signup.setEnabled(false);
+            login.setEnabled(false);
 
         firebaseAuth.createUserWithEmailAndPassword(email ,password ).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -312,7 +312,7 @@ public class Sign_Up extends AppCompatActivity {
                 else {
 
                     TastyToast.makeText(getApplicationContext(), "Registered User", Toast.LENGTH_SHORT,TastyToast.INFO).show();
-                    signup.setEnabled(true);
+                    login.setEnabled(true);
                     setAnimVis();
                 }
 
@@ -323,7 +323,7 @@ public class Sign_Up extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
 
                 TastyToast.makeText(getApplicationContext(), " Enter Valid Details ", TastyToast.LENGTH_SHORT,TastyToast.ERROR).show();
-                signup.setEnabled(true);
+                login.setEnabled(true);
                 setAnimVis();
             }
         });
@@ -341,7 +341,7 @@ public class Sign_Up extends AppCompatActivity {
         lottieAnimationView.setVisibility(View.VISIBLE);
         lotterelay.setVisibility(View.VISIBLE);
         lottieAnimationView.playAnimation();
-        signin.setEnabled(false);
+        login.setEnabled(false);
 
     firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
         @Override
@@ -360,7 +360,7 @@ public class Sign_Up extends AppCompatActivity {
 
                 TastyToast.makeText(getApplicationContext(), " Enter Valid Details ", TastyToast.LENGTH_SHORT,TastyToast.CONFUSING).show();
                 setAnimVis();
-                signin.setEnabled(true);
+                login.setEnabled(true);
             }
 
 
@@ -371,7 +371,7 @@ public class Sign_Up extends AppCompatActivity {
 
             TastyToast.makeText(getApplicationContext(), " Enter Valid Details ", TastyToast.LENGTH_SHORT,TastyToast.ERROR).show();
             setAnimVis();
-            signin.setEnabled(true);
+            login.setEnabled(true);
         }
     });
 

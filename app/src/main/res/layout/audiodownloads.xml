@@ -6,16 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.airbnb.lottie.LottieAnimationView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/loadvideo"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_alignTop="@+id/CircularImageOntop"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginTop="53dp"
-        android:elevation="12dp" />
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/text_contact"

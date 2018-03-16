@@ -19,6 +19,7 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -33,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.github.florent37.viewanimator.AnimationListener;
+import com.github.florent37.viewanimator.ViewAnimator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -89,7 +92,7 @@ public class Home extends Fragment {
 
         viewfor = view;
 
-        getActivity().setTitle("Al-Ansaar"+"\t\t\t\t"+"آل الأنصار");
+        getActivity().setTitle("Al Ansaar"+"\t\t\t\t"+" الأنصار");
 
         initialise(view);
         getLotte();
@@ -118,6 +121,9 @@ public class Home extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.text_home);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -155,6 +161,7 @@ public class Home extends Fragment {
 
                     adapter = new EventAdapter(getActivity(),listViewH);
 
+                    adapter.setHasStableIds(true);
                     recyclerView.setAdapter(adapter);
 
                 }
@@ -259,6 +266,26 @@ public class Home extends Fragment {
         return   fin;
     }
 
+    private void getViewAnim(FloatingActionButton button, final View view) {
+
+        ViewAnimator
+                .animate(button)
+                .thenAnimate(button)
+                .scale(.1f,
+                        1f, 1f)
+                .accelerate()
+                .duration(2000)
+                .start().onStop(new AnimationListener.Stop() {
+            @Override
+            public void onStop() {
+
+                Intent intent = new Intent(getActivity(),chooser.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
     private void initialiseClicks(View view) {
         SharedPreferences preferences = this.getActivity().getSharedPreferences("chooser",Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
@@ -269,10 +296,10 @@ public class Home extends Fragment {
             public void onClick(View view) {
 
                 getMedia();
+                getViewAnim(fab,view);
                 editor.putInt("choose",0);
                 editor.commit();
-                Intent intent = new Intent(getActivity(),chooser.class);
-                startActivity(intent);
+
             }
         });
      }
@@ -294,11 +321,13 @@ public class Home extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
                 if(dy>10) {
-                    lottieAnimationView.setVisibility(View.GONE);
                     lottieAnimationView.cancelAnimation();
+                    lottieAnimationView.setVisibility(View.GONE);
                 }
+
             }
         });
+
 
 
     }

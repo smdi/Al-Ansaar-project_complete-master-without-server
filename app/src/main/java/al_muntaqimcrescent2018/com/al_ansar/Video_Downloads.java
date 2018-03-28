@@ -1,7 +1,10 @@
 package al_muntaqimcrescent2018.com.al_ansar;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.github.florent37.viewanimator.AnimationListener;
+import com.github.florent37.viewanimator.ViewAnimator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -27,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.sdsmdg.tastytoast.TastyToast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +45,7 @@ public class Video_Downloads extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-
+    private FloatingActionButton fab;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference dbreference;
     private  ChildEventListener childEventListener;
@@ -78,6 +84,20 @@ public class Video_Downloads extends Fragment {
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         listViewH = new ArrayList();
+
+
+
+        fab = (FloatingActionButton) view.findViewById(R.id.fab_montly_downloads);
+
+        fab.setImageResource(R.drawable.videocamera);
+
+        getFab("video",view);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(constants.EMAIL.equals(user.getEmail())) {
+
+            fab.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -222,9 +242,36 @@ public class Video_Downloads extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
-                if(dy>10) {
+                if (dy > 10) {
                     lottieAnimationView.cancelAnimation();
                     lottieAnimationView.setVisibility(View.GONE);
+                }
+                if (dy > 0 || dy < 0 && fab.isShown()) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+//                    ((MainActivity) getActivity()).getSupportActionBar().hide();
+                    if (constants.EMAIL.equals(user.getEmail())) {
+
+                        fab.hide();
+
+                    }
+
+                }
+            }
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
+            {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                {
+
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+//                    ((MainActivity) getActivity()).getSupportActionBar().show();
+                    if(constants.EMAIL.equals(user.getEmail())) {
+
+                        fab.show();
+
+                    }
                 }
             }
         });
@@ -232,4 +279,62 @@ public class Video_Downloads extends Fragment {
     }
 
 
+
+    private void getFab(String s,View view) {
+
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("chooser", Context.MODE_PRIVATE);
+
+        SharedPreferences preference = this.getActivity().getSharedPreferences("use", Context.MODE_PRIVATE);
+
+
+        final SharedPreferences.Editor editor = preferences.edit();
+
+        final SharedPreferences.Editor edito = preference.edit();
+        if(s.equals("video")) {
+
+            fab.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.M)
+                @Override
+                public void onClick(View view) {
+
+                    getMedia();
+                    TastyToast.makeText(getActivity(),"",TastyToast.LENGTH_SHORT,TastyToast.INFO).show();
+                    Intent intent = new Intent(getActivity(),VideoCreator.class);
+                    startActivity(intent);
+
+//                    getViewAnim(fab, view);
+                    editor.putInt("media", 0);
+                    editor.commit();
+
+                    edito.putInt("use", 1);
+                    edito.commit();
+                }
+            });
+        }
+    }
+
+    private void getViewAnim(FloatingActionButton button, final View view) {
+
+        ViewAnimator
+                .animate(button)
+                .thenAnimate(button)
+                .scale(.1f,
+                        1f, 1f)
+                .accelerate()
+                .duration(2000)
+                .start().onStop(new AnimationListener.Stop() {
+            @Override
+            public void onStop() {
+
+                Intent intent = new Intent(getActivity(),VideoCreator.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    public void getMedia() {
+        final MediaPlayer mp = MediaPlayer.create(getActivity(),R.raw.tweet);
+        mp.start();
+    }
 }

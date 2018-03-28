@@ -68,7 +68,7 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
 
-        getViewAnim(holder.videoView);
+//        getViewAnim(holder.videoView);
         final Video_Audio_Initialiser video_audio_initialiser = listitem.get(position);
 
         holder.mediades.setText(""+video_audio_initialiser.getDescription().replaceAll("\\s+","  "));
@@ -85,7 +85,7 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
             holder.datemedia.setTextColor(Color.BLACK);
         }
         else {
-            holder.datemedia.setTimeout(FadingTextView.SECONDS ,5);
+            holder.datemedia.setTimeout(FadingTextView.SECONDS ,2);
             holder.datemedia.setTexts(fadad);
             holder.datemedia.setTextColor(Color.GRAY);
         }
@@ -131,7 +131,7 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
                 getMedia();
 
                 final Video_Audio_Initialiser homeInitialiser = listitem.get(position);
-                Intent share =    shareImageData(context ,"Al Ansaar Bayan recommendation", ""+homeInitialiser.getUri() ,""+homeInitialiser.getDescription());
+                Intent share =    shareImageData(context ,"", ""+homeInitialiser.getUri() ,""+homeInitialiser.getDescription());
 
                 context.startActivity(Intent.createChooser(share, "choose one"));
 
@@ -160,17 +160,13 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
                                     setURl(downloadUrl,homeInitialiser);
                                 }
                                 catch (Exception e){e.printStackTrace();}
-
-
                             }
                         }
                     };
-
-
                     try {
                         ytEx.execute(homeInitialiser.getUri());
 
-                        Toast.makeText(context ,""+homeInitialiser.getUri(), Toast.LENGTH_LONG).show();
+                        TastyToast.makeText(context ,"checking possibility", Toast.LENGTH_LONG,TastyToast.DEFAULT).show();
                     }
                     catch (Exception e){e.printStackTrace();}
                 } catch (Exception e) {
@@ -183,18 +179,18 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
 
     }
 
-    private void getViewAnim(WebView videoView) {
-
-        ViewAnimator
-                .animate( videoView)
-                .thenAnimate(videoView)
-                .scale(.1f,
-                        1f, 1f)
-                .accelerate()
-                .duration(1000)
-                .start();
-
-    }
+//    private void getViewAnim(WebView videoView) {
+//
+//        ViewAnimator
+//                .animate( videoView)
+//                .thenAnimate(videoView)
+//                .scale(.1f,
+//                        1f, 1f)
+//                .accelerate()
+//                .duration(1000)
+//                .start();
+//
+//    }
 
     public String getSystemDate() {
 
@@ -375,13 +371,27 @@ public class Video_Audio_Adapter extends RecyclerView.Adapter<Video_Audio_Adapte
             shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         }
 
+        String textins = "";
+        SharedPreferences preferences = context.getSharedPreferences("downbutton",Context.MODE_PRIVATE);
+        int hide  = preferences.getInt("down",0);
+        if(hide == 1)
+        {
+           textins = "Al Ansaar Download Recommendations "+"\n\nMeida is Available for Download";
+        }
+        else {
+            textins = "Al Ansaar Bayan Recommendations ";
+        }
+
+           String applink = "https://play.google.com/store/apps/details?id=al_muntaqimcrescent2018.com.al_ansar";
+
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, header);
-        String sAux =""+header+"\n\n";
-        sAux = sAux + ""+link+"\n\n";
-        sAux = sAux+""+description;
+        String sAux ="\n"+ " بسم الله الرحمن الرحيم "+ "\n\n"+ textins +"\n\n";
+        sAux = sAux+""+description+"\n\n";
+        sAux = sAux + "\nFollow link to view in Al Ansaar \n"+link.replace("https://youtu.be/","http://alansaar.onuniverse.com/youtu.be/")+"\n";
+        sAux = sAux +"\nFollow link to view in youtube\n"+link+"\n";
+        sAux = sAux +"\nFollow link to download Al Ansaar (Spreading peace in the world)\n"+applink+"\n\n";
         shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
-
 
         return shareIntent;
     }

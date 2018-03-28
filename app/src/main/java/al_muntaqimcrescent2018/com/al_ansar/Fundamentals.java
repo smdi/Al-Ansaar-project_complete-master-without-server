@@ -71,7 +71,6 @@ public class Fundamentals extends AppCompatActivity {
         getSupportActionBar().hide();
 
         url = getIntent().getExtras().getString("link");
-
         webView = (WebView) findViewById(R.id.my_web_view);
         webSettings = webView.getSettings();
         webView.setWebViewClient(new MyBrowser(){

@@ -178,9 +178,7 @@ public class Contact extends Fragment {
                 startActivity(intent);
             }
         });
-
     }
-
     private void initialiseClicks(View view) {
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -205,46 +203,29 @@ public class Contact extends Fragment {
 
             firebaseDatabase = FirebaseDatabase.getInstance();
             dbreference = firebaseDatabase.getReference().child(fireDb);
-
-
              dbreference.addChildEventListener(new ChildEventListener() {
                  @Override
                  public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-
                      ContactInitialiser contact = dataSnapshot.getValue(ContactInitialiser.class);
-
                      listViewH.add(contact);
                      adapter = new ContactAdapter(getActivity(),listViewH);
                      recyclerView.setAdapter(adapter);
                  }
-
                  @Override
                  public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
                  }
-
                  @Override
                  public void onChildRemoved(DataSnapshot dataSnapshot) {
-
                  }
-
                  @Override
                  public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
                  }
-
                  @Override
                  public void onCancelled(DatabaseError databaseError) {
-
                  }
              });
-
-
             return null ;
         }
-
-
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
@@ -268,6 +249,31 @@ public class Contact extends Fragment {
                 {
                     lottieAnimationView.cancelAnimation();
                     lottieAnimationView.setVisibility(View.GONE);
+                }
+                if (dy > 0 ||dy<0 && fab.isShown()) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+//                    ((MainActivity) getActivity()).getSupportActionBar().hide();
+                    if (constants.EMAIL.equals(user.getEmail())) {
+
+                        fab.hide();
+                    }
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
+            {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+//                    ((MainActivity) getActivity()).getSupportActionBar().show();
+                    if(constants.EMAIL.equals(user.getEmail())) {
+
+                        fab.show();
+
+                    }
                 }
             }
         });

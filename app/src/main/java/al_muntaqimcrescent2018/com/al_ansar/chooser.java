@@ -198,7 +198,6 @@ public class chooser extends AppCompatActivity {
       }catch (Exception e){e.printStackTrace();}
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
             super.onActivityResult(requestCode, resultCode, data);
@@ -215,9 +214,7 @@ public class chooser extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 img.setImageBitmap(bitmap);
-
             }
-
     }
 
     private String corrector(String master) {

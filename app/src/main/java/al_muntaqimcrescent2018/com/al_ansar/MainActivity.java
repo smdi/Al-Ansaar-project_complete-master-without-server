@@ -1,12 +1,15 @@
 package al_muntaqimcrescent2018.com.al_ansar;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ApplicationErrorReport;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -60,15 +63,45 @@ public class MainActivity extends AppCompatActivity
     private TextView emailTv;
     private static final int RC_File_CHOOSER = 2;
     private WebView webView;
+    public static Context getActivity;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getActivity = getApplicationContext();
         setVersionNotif();
         initialse();
-        displaySelectedItem(R.id.hb);
+        setEventLink();
+//        getContext();
+    }
 
+    public static Context getContext()
+    {
+        return getActivity;
+    }
+
+    private void setEventLink() {
+         preferences = getApplicationContext().getSharedPreferences("EventAppLink",MODE_PRIVATE);
+         String Event = preferences.getString("AppLink","NODATA");
+         if(Event.toString().contains("Events"))
+         {
+             displaySelectedItem(R.id.comingEvents);
+             setEventNull();
+         }
+         else {
+
+             displaySelectedItem(R.id.hb);
+         }
+    }
+
+    private void setEventNull() {
+        SharedPreferences preferences = getSharedPreferences("EventAppLink",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("AppLink","NODATA");
+        editor.commit();
     }
 
     private void setVersionNotif() {
@@ -80,7 +113,6 @@ public class MainActivity extends AppCompatActivity
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
             NotificationChannel notificationChannel = new NotificationChannel(constants.CHANNEL_ID, constants.CHANNEL_NAME,NotificationManager.IMPORTANCE_HIGH);
-
             notificationChannel.setDescription(constants.DESCRIPTION);
             notificationChannel.setLightColor(Color.GREEN);
             notificationChannel.enableLights(true);
@@ -232,16 +264,33 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.signout) {
 
 
-            getMedia();
-            TastyToast.makeText(getApplicationContext() ,"see you soon" ,Toast.LENGTH_SHORT,TastyToast.SUCCESS).show();
-            SharedPreferences.Editor editor = getSharedPreferences("Sign",MODE_PRIVATE).edit();
-            editor.putInt("signIn",0);
-            editor.commit();
-            Intent intent = new Intent(getApplicationContext(),Sign_Up.class);
-            startActivity(intent);
-            FirebaseAuth.getInstance().signOut();
+            android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Do you want to sign out ?")
+                    .setCancelable(true)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
 
-            finish();
+                            getMedia();
+                            TastyToast.makeText(getApplicationContext() ,"see you soon" ,Toast.LENGTH_SHORT,TastyToast.SUCCESS).show();
+                            SharedPreferences.Editor editor = getSharedPreferences("Sign",MODE_PRIVATE).edit();
+                            editor.putInt("signIn",0);
+                            editor.commit();
+                            Intent intent = new Intent(getApplicationContext(),Sign_Up.class);
+                            startActivity(intent);
+                            FirebaseAuth.getInstance().signOut();
+                            finish();
+
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            dialog.cancel();
+
+                        }
+                    });
+            android.support.v7.app.AlertDialog alert = builder.create();
+            alert.show();
 
             return true;
         }
@@ -272,7 +321,7 @@ public class MainActivity extends AppCompatActivity
                case R.id.monthly_bayans:
 
                    if(internet) {
-                       fragment = new MonthlyBayans();
+                       fragment = new Monthly_Video_Downloads();
                        editor.putInt("down", 0);
                        editor.commit();
 
@@ -287,7 +336,7 @@ public class MainActivity extends AppCompatActivity
                case R.id.downloads:
 
                    if(internet) {
-                       fragment = new Downloads();
+                       fragment = new Video_Downloads();
                        editor.putInt("down", 1);
                        editor.commit();
 
@@ -335,7 +384,7 @@ public class MainActivity extends AppCompatActivity
                        i.setType("text/plain");
                        i.putExtra(Intent.EXTRA_SUBJECT, "Al Ansaar");
                        String sAux = "\nAl Ansaar App link (Spreading peace to world)\n\n";
-//                    sAux = sAux + "https://play.google.com/store/apps/details?id=Orion.Soft \n\n";
+                    sAux = sAux + "https://play.google.com/store/apps/details?id=al_muntaqimcrescent2018.com.al_ansar \n\n";
                        i.putExtra(Intent.EXTRA_TEXT, sAux);
                        startActivity(Intent.createChooser(i, "choose one"));
                    }

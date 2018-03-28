@@ -34,6 +34,7 @@ import com.github.florent37.viewanimator.ViewAnimator;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.tomer.fadingtextview.FadingTextView;
 
+import java.net.URI;
 import java.util.Calendar;
 import java.util.List;
 
@@ -95,17 +96,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         public TextView  headings  ,more;
         public FadingTextView dates;
         public TextView  descriptions;
-        public ImageView cimages,tag,download,links;
+        public ImageView cimages,download,links;
         public RelativeLayout relay;
         public ImageView share;
         public WebView webView;
+        public  int event;
 
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             myview = itemView;
-            tag = (ImageView) itemView.findViewById(R.id.ribbons);
             download = (ImageView) itemView.findViewById(R.id.downloadbut);
             dates = (FadingTextView) itemView.findViewById(R.id.date);
             more = (TextView) itemView.findViewById(R.id.more);
@@ -117,15 +118,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             webView = (WebView) itemView.findViewById(R.id.watsapp);
             links = (ImageView) itemView.findViewById(R.id.linkImage);
             SharedPreferences sharedPreferences= context.getSharedPreferences("EventHome",Context.MODE_PRIVATE);
-            int event = sharedPreferences.getInt("event",0);
-            if(event == 0)
-            {
-
-                tag.setImageResource(R.drawable.ribbonssf);
-            }
-            else {
-                tag.setImageResource(R.drawable.lacesf);
-            }
+            event = sharedPreferences.getInt("event",0);
         }
     }
 
@@ -206,8 +199,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
                 public void onClick(View view) {
 
                     getMedia();
-                    getViewAnim(holder.more,holder);
-
+//                    getViewAnim(holder.more,holder);
+                    getTextChange(holder);
                 }
             });
 
@@ -243,19 +236,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
         if(isphoto)
         {
-
-            Glide.with(holder.cimages.getContext()).load(homeInitialiser.getUri())
-                    .error(R.drawable.alansare)
+            Glide.with(context).load(homeInitialiser.getUri()).error(R.drawable.alansare)
                     .into(holder.cimages);
 
-            ViewAnimator
-                    .animate( holder.cimages)
-                    .thenAnimate(holder.cimages)
-                    .scale(.1f,
-                            1f, 1f)
-                    .accelerate()
-                    .duration(4000)
-                    .start();
+//            ViewAnimator
+//                    .animate( holder.cimages)
+//                    .thenAnimate(holder.cimages)
+//                    .scale(.1f,
+//                            1f, 1f)
+//                    .accelerate()
+//                    .duration(4000)
+//                    .start();
 
         }
         else {
@@ -272,7 +263,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
                try {
 
-                   Intent share =    shareImageData(context ,""+homeInitialiser.getHeading(), ""+homeInitialiser.getUri() ,""+homeInitialiser.getDescription());
+                   Intent share =    shareImageData(context ,""+homeInitialiser.getHeading(), ""+homeInitialiser.getUri() ,""+homeInitialiser.getDescription(),homeInitialiser.getLink());
 
                    context.startActivity(Intent.createChooser(share, "choose one"));
 
@@ -296,26 +287,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             holder.dates.setTextColor(Color.BLACK);
         }
         else {
-           holder.dates.setTimeout(FadingTextView.SECONDS ,5);
+           holder.dates.setTimeout(FadingTextView.SECONDS ,2);
             holder.dates.setTexts(fadad);
             holder.dates.setTextColor(Color.GRAY);
         }
 
-        holder.cimages.setLongClickable(true);
-        holder.cimages.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-
-                getMedia();
-
-
-                Intent intent = new Intent(context,Fundamentals.class);
-                intent.putExtra("link",""+homeInitialiser.getUri());
-                context.startActivity(intent);
-
-                return true;
-            }
-        });
 
 
     }
@@ -339,7 +315,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
         TastyToast.makeText(context,"downloading file",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS).show();
     }
-    public static Intent shareImageData(Context context, String header, String link, String description) {
+    public static Intent shareImageData(Context context, String header, String link, String description,String linkOpen) {
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
 
@@ -351,35 +327,68 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         }
 
+
+        String textins = "";
+        SharedPreferences sharedPreferences= context.getSharedPreferences("EventHome",Context.MODE_PRIVATE);
+        int event = sharedPreferences.getInt("event",0);
+        if(event == 0)
+        {
+            textins = "Al Ansaar Home Recommendations "+"\n\nAl Ansaar has New Feed in Home";
+        }
+        else {
+            textins = "Al Ansaar Event Recommendations "+"\n\nAl Ansaar has New Feed in Events";
+        }
+
+        String applink = "https://play.google.com/store/apps/details?id=al_muntaqimcrescent2018.com.al_ansar";
+
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, header);
-        String sAux =" بسم الله الرحمن الرحيم " + "\n\n" + "Al Ansaar Recommendations\n\n" +header+"\n";
-        sAux = sAux + "";
+        String sAux ="\n"+" بسم الله الرحمن الرحيم " + "\n\n" + textins+"\n\n" +header+"\n";
         sAux = sAux+"\n"+description+"\n";
-        shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
+        if(link.equals(""))
+        {
+        }
+        else {
+            sAux = sAux +"\n follow link for open image \n"+ link +"\n";
+        }
+        if(linkOpen.equals(""))
+        {
+        }
+        else {
+               sAux = sAux +"\n follow link for more information \n"+ linkOpen +"\n";
+        }
+        if(event == 0)
+        {
+            sAux = sAux +"\nFollow link to open Al Ansaar\n"+ "http://alansaar.onuniverse.com/youtu.be/Main\n";
+        }
+        else {
+            sAux = sAux +"\nFollow link to open Al Ansaar\n"+ "http://alansaar.onuniverse.com/youtu.be/Events\n";
+        }
 
+        sAux = sAux +"\nFollow link to download Al Ansaar (Spreading peace in the world)\n"+applink+"\n\n";
+        shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
 
         return shareIntent;
     }
 
-    private void getViewAnim(View video, final ViewHolder holder) {
-
-        ViewAnimator
-                .animate(video)
-                .thenAnimate(video)
-                .scale(.1f,
-                        1f, 1f)
-                .accelerate()
-                .duration(1000)
-                .start().onStop(new AnimationListener.Stop() {
-            @Override
-            public void onStop() {
-                getTextChange(holder);
-
-            }
-        });
-
-    }
+//    private void getViewAnim(View video, final ViewHolder holder) {
+//
+//        ViewAnimator
+//                .animate(video)
+//                .thenAnimate(video)
+//                .scale(.1f,
+//                        1f, 1f)
+//                .accelerate()
+//                .duration(1000)
+//                .start().onStop(new AnimationListener.Stop() {
+//            @Override
+//            public void onStop() {
+//                getTextChange(holder);
+//
+//            }
+//        });
+//
+//    }
 
     private void getTextChange(ViewHolder holder) {
         if (change) {

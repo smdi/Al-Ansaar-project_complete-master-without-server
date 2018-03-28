@@ -3,6 +3,7 @@ package al_muntaqimcrescent2018.com.al_ansar;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -10,6 +11,9 @@ import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AppCompatActivity;
+
+import com.sdsmdg.tastytoast.TastyToast;
 
 /**
  * Created by Imran on 23-02-2018.
@@ -43,7 +47,6 @@ public class NotificationManageri {
         Vibrator v =(Vibrator)context.getSystemService(context.VIBRATOR_SERVICE);
         v.vibrate(1000);
 
-
         try {
 
             mp = MediaPlayer.create(context, R.raw.twitter_ios);
@@ -66,10 +69,10 @@ public class NotificationManageri {
                         .setSmallIcon(R.drawable.alansar)
                         .setColor(Color.WHITE)
                         .setLights(1,1,1)
-                        .setContentTitle("Al-Ansaar")
+                        .setContentTitle("Al Ansaar")
                         .setContentText(content)
                         .setAutoCancel(true)
-                        .setTicker("Al-Ansaar")
+                        .setTicker("Al Ansaar")
                         .setLargeIcon(bitmap)
                         .setContentIntent(pi1);
 

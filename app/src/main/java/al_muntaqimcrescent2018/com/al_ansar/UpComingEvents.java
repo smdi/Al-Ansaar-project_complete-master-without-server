@@ -247,25 +247,26 @@ public class UpComingEvents extends Fragment {
         return   fin;
     }
 
-    private void getViewAnim(FloatingActionButton button, final View view) {
-
-        ViewAnimator
-                .animate(button)
-                .thenAnimate(button)
-                .scale(.1f,
-                        1f, 1f)
-                .accelerate()
-                .duration(2000)
-                .start().onStop(new AnimationListener.Stop() {
-            @Override
-            public void onStop() {
-
-                Intent intent = new Intent(getActivity(),chooser.class);
-                startActivity(intent);
-            }
-        });
-
-    }    private void initialiseClicks(View view) {
+//    private void getViewAnim(FloatingActionButton button, final View view) {
+//
+//        ViewAnimator
+//                .animate(button)
+//                .thenAnimate(button)
+//                .scale(.1f,
+//                        1f, 1f)
+//                .accelerate()
+//                .duration(2000)
+//                .start().onStop(new AnimationListener.Stop() {
+//            @Override
+//            public void onStop() {
+//
+//                Intent intent = new Intent(getActivity(),chooser.class);
+//                startActivity(intent);
+//            }
+//        });
+//
+//    }
+       private void initialiseClicks(View view) {
 
         SharedPreferences preferences = this.getActivity().getSharedPreferences("chooser",Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
@@ -276,7 +277,9 @@ public class UpComingEvents extends Fragment {
             public void onClick(View view) {
 
                 getMedia();
-                getViewAnim(fab,view);
+                Intent intent = new Intent(getActivity(),chooser.class);
+                startActivity(intent);
+//                getViewAnim(fab,view);
                 editor.putInt("choose",1);
                 editor.commit();
 
@@ -317,6 +320,32 @@ public class UpComingEvents extends Fragment {
                 if(dy>10) {
                     lottieAnimationView.cancelAnimation();
                     lottieAnimationView.setVisibility(View.GONE);
+                }
+                if (dy > 0 ||dy<0 && fab.isShown()) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+//                    ((MainActivity) getActivity()).getSupportActionBar().hide();
+                    if (constants.EMAIL.equals(user.getEmail())) {
+
+                        fab.hide();
+
+                    }
+
+                }
+            }
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState)
+            {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+//                    ((MainActivity) getActivity()).getSupportActionBar().show();
+                    if (constants.EMAIL.equals(user.getEmail())) {
+
+                        fab.show();
+
+                    }
+
                 }
             }
         });

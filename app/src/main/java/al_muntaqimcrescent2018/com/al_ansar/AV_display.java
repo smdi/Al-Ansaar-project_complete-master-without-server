@@ -1,9 +1,14 @@
 package al_muntaqimcrescent2018.com.al_ansar;
 
 import android.app.DownloadManager;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -58,38 +63,104 @@ public class AV_display extends AppCompatActivity {
     private WebSettings webSettings;
     private WebView webView ;
     TextView tv1;
+    private SharedPreferences preferences,prefer;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-          this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN ,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED ,WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
         setContentView(R.layout.activity_av_display);
-        getLotte();
-        url = getIntent().getExtras().getString("link");
 
-        SharedPreferences preferences =getApplicationContext().getSharedPreferences("NOTIFY",Context.MODE_PRIVATE);
-        int notify = preferences.getInt("notify",1);
-        if(notify == 1)
-        {
-
-            vid = getVid(url);
-            getWebView(vid,notify);
-
-            getFab();
-        }
-
-        else{
-
-            fab = (FloatingActionButton) findViewById(R.id.fab_delete);
-            fab.setVisibility(View.GONE);
-            getWebView(url,notify);
-        }
         getSupportActionBar().hide();
 
 
-    }
+        SharedPreferences getSign = getSharedPreferences("Sign", MODE_PRIVATE);
+        int sign = getSign.getInt("signIn", 0);
 
+        if (sign == 1) {
+
+            try {
+
+                getLotte();
+                Intent appLinkIntent = getIntent();
+                String appLinkAction = appLinkIntent.getAction();
+                Uri appLinkData = appLinkIntent.getData();
+
+
+                if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
+
+                    if(appLinkData.toString().contains("Main")) {
+                        Intent intent = new Intent(getApplicationContext() ,MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else  if(appLinkData.toString().contains("Event"))
+                    {
+                        getFab();
+                        setShare(appLinkData.toString());
+                        Intent intent = new Intent(getApplicationContext() ,MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    else {
+                        vid = getVid("" + appLinkData);
+                        getWebView(vid, 1);
+                    }
+                }
+                else if(!getIntent().getExtras().getString("link").equals(null)){
+
+                    url = getIntent().getExtras().getString("link");
+
+                    preferences = getApplicationContext().getSharedPreferences("NOTIFY", Context.MODE_PRIVATE);
+                    int notify = preferences.getInt("notify", 1);
+                    if (notify == 1) {
+
+                        vid = getVid(url);
+                        getWebView(vid, notify);
+
+                        getFab();
+                    }
+                    else {
+
+                        fab = (FloatingActionButton) findViewById(R.id.fab_delete);
+                        fab.setVisibility(View.GONE);
+                        getWebView(url, notify);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(AV_display.this);
+            builder.setMessage("Please sign in to Al Ansaar")
+                    .setCancelable(false)
+                    .setPositiveButton("Sign In", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(getApplicationContext(),Sign_Up.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            finish();
+                            dialogInterface.cancel();
+
+                        }
+                    });
+//
+            android.support.v7.app.AlertDialog alert =builder.create();
+            alert.setTitle("Al Ansaar");
+            alert.show();
+        }
+    }
     public void getWebView(String vid,int notify) {
 
 
@@ -200,7 +271,30 @@ public class AV_display extends AppCompatActivity {
 
             return  ret;
         }
+        else if(yt.contains("alansaar"))
+        {
+            final String[] you = yt.split("http://alansaar.onuniverse.com/youtu.be/");
+
+            if (you[1].contains("&")) {
+                ty = you[1].split("&");
+
+
+                System.out.println("" + ty[0]);
+
+                ret = ty[0];
+            } else {
+
+                System.out.println("" + you[1]);
+
+                ret = you[1];
+            }
+
+            return  ret;
+
+        }
         else {
+
+
 
             final String[] you = yt.split("https://youtu.be/");
 
@@ -221,6 +315,8 @@ public class AV_display extends AppCompatActivity {
             return  ret;
 
         }
+
+
 
     }
 
@@ -275,6 +371,13 @@ public class AV_display extends AppCompatActivity {
 
     }
 
+    public void setShare(String share) {
+
+        prefer = getSharedPreferences("EventAppLink",MODE_PRIVATE);
+        editor = prefer.edit();
+        editor.putString("AppLink",share);
+        editor.commit();
+    }
 
 
     private class MyBrowser extends WebViewClient {
